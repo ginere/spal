@@ -1,0 +1,50 @@
+{
+  "name": "skin-admin",
+  "version": "1.0.0",
+  "description": "Skin for video administrations",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@git.spoonapps.com/home/git/git/skin-admin.git"
+  },
+  "keywords": [
+    "skin",
+    "admin"
+  ],
+  "browserify-shim": {},
+  "author": "avm",
+  "license": "ISC",
+  "devDependencies": {
+    "brfs": "^1.4.3",
+    "browser-sync": "^2.13.0",
+    "browserify-shim": "^3.8.12",
+    "del": "^2.2.1",
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^3.1.0",
+    "gulp-clean-css": "^2.0.11",
+    "gulp-ejs": "^2.1.2",
+    "gulp-if": "^2.0.1",
+    "gulp-jshint": "^2.0.1",
+    "gulp-less": "^3.1.0",
+    "gulp-notify": "^2.2.0",
+    "gulp-sourcemaps": "^1.6.0",
+    "gulp-util": "^3.0.7",
+    "jshint": "^2.9.2",
+    "less-plugin-autoprefix": "^1.5.1",
+    "proxy-middleware": "^0.15.0",
+    "run-sequence": "^1.2.2",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.7.0"
+  },
+  "dependencies": {
+    "gentelella": "^1.3.0",
+    "jquery": "^3.1.0",
+    "log4javascript": "^1.4.15",
+    "mustache": "^2.2.1",
+    "q": "^1.4.1"
+  }
+}

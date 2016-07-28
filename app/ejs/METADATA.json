@@ -1,0 +1,21 @@
+{
+	"LANG":"es",
+
+	"APPLICATION_TITLE":"Admin V2",	
+	"PROJECT_YEAR":"2016",
+	"PROJECT_NAME":"admin",
+	"PROJECT_VERSION":"Admin v2.0",
+	"PROJECT_AUTOR":"The team",
+
+	"BRAND_TITLE":"Admin V2",
+	"TITLE":"Admin",
+	"DESCRIPTION":"Video Administration V2",
+	"KEYWORDS":"Video,Admin",
+	"AUTHOR":"The team",
+
+
+	"CSS_PATH":"./css",
+
+	"TOMCAT_URL":"http://localhost:8080/video-admin2"
+
+}
