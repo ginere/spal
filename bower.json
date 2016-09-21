@@ -1,0 +1,29 @@
+{
+    "name": "spal.js",
+    "description": "Single Page Application Library",
+    "main": "src/spal.js",
+    "authors": [
+        "ginere"
+    ],
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/ginere/spal.git"
+	},  "license": "ISC",
+    "keywords": [
+        "spa",
+        "jquery"
+    ],
+    "homepage": "http://ginere.eu",
+    "dependencies": {
+		"jquery": ">=1.7.0",
+        "q": "^1.4.1"
+	},
+    "ignore": [
+        "**/*~",
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "test",
+        "tests"
+    ]
+}

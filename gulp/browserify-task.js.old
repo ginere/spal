@@ -1,0 +1,109 @@
+'use strict';
+
+// https://www.viget.com/articles/gulp-browserify-starter-faq
+var browserify = require('browserify');
+var gulp = require('gulp');
+var source = require('vinyl-source-stream');
+
+var scriptsEntryPoint='./src/example/example.js';
+var dist=global.demoDist;
+var scripts='/js';
+
+
+
+// https://www.npmjs.com/package/vinyl-source-stream
+
+// var config       = require('../config');
+var gulp         = require('gulp');
+var gulpif       = require('gulp-if');
+var source       = require('vinyl-source-stream');
+var sourcemaps   = require('gulp-sourcemaps');
+var buffer       = require('vinyl-buffer');
+var watchify     = require('watchify');
+var browserify   = require('browserify');
+//var handleErrors = require('../util/handleErrors');
+var browserSync  = require('browser-sync');
+var shim         = require('browserify-shim');
+var brfs         = require('brfs');
+var notify = require('gulp-notify');
+
+
+
+// var gutil        = require('gulp-util');
+// var prettyHrtime = require('pretty-hrtime');
+// //var bundleLogger = require('../util/bundleLogger');
+// //var startTime;
+// var bundleLogger = {
+//     startTime:0,
+//     start: function() {
+//         startTime = process.hrtime();
+//     },
+    
+//     end: function() {
+//         var taskTime = process.hrtime(startTime);
+//         var prettyTime = prettyHrtime(taskTime);
+//         gutil.log(gutil.colors.green('\'Rebundle\''), 'in', gutil.colors.magenta(prettyTime));
+//     }
+// };
+
+/* jshint ignore:start */
+function handleErrors(error) {
+
+    var args = Array.prototype.slice.call(arguments);
+    
+    // Send error to notification center with gulp-notify
+    notify.onError({
+        title: 'Compile Error',
+        message: '<%= error.message %>'
+    }).apply(this, args);
+    
+    // Keep gulp from hanging on this task
+    this.emit('end');    
+}
+
+function browserifyBuild() {
+	var entry = 'bundle.js';
+
+	var bundler = browserify({
+		entries: scriptsEntryPoint,
+	    debug: true,
+	    cache: {},
+	    packageCache: {},
+	    fullPaths: true
+	}, watchify.args);
+
+    function rebundle() {
+	    var stream = bundler.bundle();
+	    return stream.on('error', handleErrors)
+	        .pipe(source(entry))
+	        .pipe(buffer())
+            .pipe(sourcemaps.init({loadMaps: true, debug:true}))
+	        .pipe(sourcemaps.write('./'))
+	        .pipe(gulp.dest(dist + scripts))
+	        .pipe(gulpif(browserSync.active, browserSync.reload({ stream: true, once: true })));
+	}
+    
+
+	if ( !global.isProd ) {
+	    bundler = watchify(bundler);
+	    bundler.on('update', function() {
+	        rebundle();
+	    });
+	}
+
+	var transforms = [
+	    shim,
+	    brfs
+	];
+
+	transforms.forEach(function(transform) {
+	    bundler.transform(transform);
+	});
+
+	return rebundle();
+}
+
+module.exports = function() {
+	return browserifyBuild();
+};
+/* jshint ignore:end */

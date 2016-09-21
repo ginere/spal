@@ -14,7 +14,15 @@
     "skin",
     "admin"
   ],
-  "browserify-shim": {},
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
+  "browserify-shim": {
+    "jquery": "global:$",
+    "q": "global:$Q"
+  },
   "author": "avm",
   "license": "ISC",
   "devDependencies": {
@@ -30,10 +38,14 @@
     "gulp-jshint": "^2.0.1",
     "gulp-less": "^3.1.0",
     "gulp-notify": "^2.2.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-size": "^2.1.0",
     "gulp-sourcemaps": "^1.6.0",
+    "gulp-uglify": "^2.0.0",
     "gulp-util": "^3.0.7",
     "jshint": "^2.9.2",
     "less-plugin-autoprefix": "^1.5.1",
+    "pretty-hrtime": "^1.0.2",
     "proxy-middleware": "^0.15.0",
     "run-sequence": "^1.2.2",
     "vinyl-buffer": "^1.0.0",
