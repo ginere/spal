@@ -22,17 +22,12 @@
  *		- documentReady: Called when the SPA application jqury document ready event.
  *		- pageReady: Called after the page has been rendered. For each
  */
-(function(window){
-
 'use strict';
 
-//var error=require('../lib/error');
-//var $ = require('jquery');
-//var $Q = require('q');
-//var log=require('./log.js');
-
-var error=function(){};
-var log=function(){};
+var error=require('./error');
+var $ = require('jquery');
+var $Q = require('q');
+var log=require('./log.js');
 
 var PAGES={};
 var DOCUMENT_READY=[];
@@ -126,7 +121,8 @@ function showError(e,errorUrl){
 			return closePage();
 		}).then(function(){
 			currentPage=page;
-			return page.render(URL,e,errorUrl);
+            // passing data to the render function
+			return page.render(errorUrl,e,errorUrl);
 		}).catch(function(err){
 			log.error("Error loading the error page:"+URL,err);
 			return error.reject("Error loading the error page:"+URL,err);
@@ -210,7 +206,7 @@ function openPage(page,uri,isFirstOpen){
 
 /**
  * This render the url.
- * Returns true if the uri has been handled by the controler
+ * Returns true if the uri has been handled by the controler.
  */
 function openUrl(URL,isFirstOpen) {
 
@@ -249,8 +245,9 @@ function onPopStateEventListener(event){
 	// Is the openUrl who shoul do the prevent default
 	// TODO This is temporal
 	if (!window.location.hash) {
-		openUrl(uri,false);
-		event.preventDefault();
+		if (openUrl(uri,false)){
+		    event.preventDefault();
+        }
 	}
 }
 
@@ -375,13 +372,13 @@ SINGLETON.subscriveWidget=function(name,widget){
 };
 
 
-SINGLETON.start=function(error){
+SINGLETON.start=function(customErrorPage){
 	if (!error){
 		log.error("No error page passed");
 		return ;
 	} 
 	
-	errorPage=error;
+	errorPage=customErrorPage;
 	
 	// On ready state
 	$(document).ready(function(){
@@ -415,8 +412,11 @@ SINGLETON.start=function(error){
 			// wating for the widget promises to start ...
 			return $Q.all(DOCUMENT_READY_PROMISES).then(function(schemas) {
 				// draw the current page
-				openUrl(uri,true);		
-				return $Q.resolve();
+				if (openUrl(uri,true)){
+				    return $Q.resolve();
+                } else {
+                    return error.reject("No page found for url:"+uri);
+                }
 			}).catch(function(err){
 				return showError(err,uri);
 			});
@@ -452,15 +452,4 @@ SINGLETON.subscriveEvents=function(){
 };
 
 
-    //module.exports=SINGLETON;
-    //var SPA=SINGLETON;
-    
-    if ( typeof module === "object" && typeof module.exports === "object" ) {
-        module.exports=SINGLETON;
-    }
-
-    if (window){
-        window.SPA=SINGLETON;
-    }
-        
-}(window));
+module.exports=SINGLETON;

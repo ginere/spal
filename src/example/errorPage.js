@@ -4,25 +4,43 @@
  */
 'use strict';
 
+var log=require('../log.js');
+
 var SINGLETON={};
 
 SINGLETON.id="error";
 SINGLETON.uri=["error","error.html"];
 
 SINGLETON.init=function(){
-    console.log("+++ Init");
+    log.log("+++ Init");
 };
 
 SINGLETON.load=function(){
-    console.log("+++ load");
+    log.log("+++ load");
 };
 
-SINGLETON.render=function(){
-    console.log("+++ render");
+function renderException(e){
+    var ret="<p> Message:"+e.message+"</p>"+
+        "<pre> Stack:"+e.stack+"</pre>";
+    
+    if (e.parent){
+        ret+="<p> parent:"+renderException(e.parent)+"</p>";
+    }
+    
+    return ret;
+}
+
+SINGLETON.render=function(URL,e,errorUrl){
+    log.log("+++ render");
+    $("body").html(
+        "<p> URL:"+URL+"</p>"+
+            "<p> Exception:"+renderException(e)+"</p>"+
+            "<p> errorUrl:"+errorUrl+"</p>"
+    );
 };
 
 SINGLETON.close=function(){
-    console.log("+++ close");
+    log.log("+++ close");
 };
 
 
