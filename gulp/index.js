@@ -63,7 +63,7 @@ gulp.task('jshint', function () {
 
 gulp.task('copy', function () {
     // copy the originals
-    return gulp.src([global.src+"/spa.js"])
+    return gulp.src([global.src+"/*.js"])
         .pipe(gulp.dest(global.dist))
         .pipe(size())
     ;
@@ -95,7 +95,7 @@ gulp.task('copy-demo-bower',function () {
 
 gulp.task('min', function () {
     // minimize
-    return gulp.src(global.src+"/spa.js")
+    return gulp.src(global.src+"/*.js")
 		.pipe(uglify())
         .pipe(rename({ suffix: '.min' }))
         .pipe(gulp.dest(global.dist))
