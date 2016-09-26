@@ -13,7 +13,7 @@
  *      Function returning promises:
  *		- init: A function to be called when the page is subscrived. (No doom).
  *		- load: Called beforethe page is renderd ...
- *		- render: That render the page
+ *		- render: That render the page. The error pagge will receive as 2th parameter the err.
  *		- close: Called when the page is closed.
  *		- firstOpen: @Deprecated. Called if this page is the first page called in the SPA
  *
@@ -24,7 +24,7 @@
  */
 'use strict';
 
-var error=require('./error');
+var Error=require('./error');
 var $ = require('jquery');
 var $Q = require('q');
 var log=require('./log.js');
@@ -122,10 +122,10 @@ function showError(e,errorUrl){
 		}).then(function(){
 			currentPage=page;
             // passing data to the render function
-			return page.render(errorUrl,e,errorUrl);
+			return page.render(errorUrl,e);
 		}).catch(function(err){
 			log.error("Error loading the error page:"+URL,err);
-			return error.reject("Error loading the error page:"+URL,err);
+			return Error.reject("Error loading the error page:"+URL,err);
 		});
 	}
 }
@@ -160,7 +160,7 @@ function callRenderWidgets(page) {
  */
 function openPage(page,uri,isFirstOpen){
 	if (!page){
-		return error.reject("No page passed for URI:'"+uri+"' isFirstOpen:"+isFirstOpen);
+		return Error.reject("No page passed for URI:'"+uri+"' isFirstOpen:"+isFirstOpen);
 	} else {
 		if (isFirstOpen && $.isFunction(page.firstOpen)){
 			currentPage=page;
@@ -373,7 +373,7 @@ SINGLETON.subscriveWidget=function(name,widget){
 
 
 SINGLETON.start=function(customErrorPage){
-	if (!error){
+	if (!customErrorPage){
 		log.error("No error page passed");
 		return ;
 	} 
@@ -415,7 +415,7 @@ SINGLETON.start=function(customErrorPage){
 				if (openUrl(uri,true)){
 				    return $Q.resolve();
                 } else {
-                    return error.reject("No page found for url:"+uri);
+                    return Error.reject("No page found for url:"+uri);
                 }
 			}).catch(function(err){
 				return showError(err,uri);

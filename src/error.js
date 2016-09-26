@@ -86,7 +86,7 @@ SINGLETON.isRedirect=function(err) {
 	} else {
 		return false;
 	}
-}
+};
 
 SINGLETON.resolve=function(response) {
 	return Q.resolve(response);
