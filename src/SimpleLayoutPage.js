@@ -56,7 +56,7 @@ var SINGLETON=function(id,uri,Layout){
         try {
             return Layout.render(id,that.template);
         }catch(err){
-            throw new Error.ApplicationError("Error while rentering page:"+id+", uri:"+uri,err);
+            throw Error.error("Error while rentering page:"+id+", uri:"+uri,err);
         }
     };
 

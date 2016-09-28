@@ -20,18 +20,17 @@ SINGLETON.load=function(){
 };
 
 function renderException(e){
-    var ret="<p> Message:"+e.message+"</p>"+
+    var ret="<pre> Message:"+e.message+"</pre>"+
         "<pre> Stack:"+e.stack+"</pre>";
-    
+
     if (e.parent){
-        ret+="<p> parent:"+renderException(e.parent)+"</p>";
+        ret+="<pre> parent:"+renderException(e.parent)+"</pre>";
     }
     
     return ret;
 }
 
 SINGLETON.render=function(URL,e,errorUrl){
-    log.log("+++ render");
     $("body").html(
         "<p> URL:"+URL+"</p>"+
             "<p> Exception:"+renderException(e)+"</p>"+

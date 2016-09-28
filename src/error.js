@@ -108,14 +108,16 @@ SINGLETON.rejectAjax=function(err,url,title,data) {
 	return Q.reject(error);
 };
 
-SINGLETON.error=function(message,caller,err) {
-	var error;
-	if (caller){
-		error=new ApplicationError(message,err,caller);		
-	} else {
-		error=new ApplicationError(message,err,arguments.callee);
-	}
-	return error;
+SINGLETON.error=function(message,err) {
+	// var error;
+	// if (caller){
+	// 	error=new ApplicationError(message,err,caller);		
+	// } else {
+	// 	error=new ApplicationError(message,err,arguments.callee);
+	// }
+	// return error;
+
+    return new ApplicationError(message,err,arguments.callee);
 };
 
 SINGLETON.log=function(err) {

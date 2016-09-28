@@ -71,7 +71,7 @@ gulp.task('copy', function () {
 
 gulp.task('copy-demo-html',function () {
     // copy the originals
-    return gulp.src([global.src+"/example/index.html"])
+    return gulp.src([global.src+"/example/*.html"])
         .pipe(gulp.dest(global.demoDist))
         .pipe(size())
     ;

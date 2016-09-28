@@ -9,7 +9,7 @@ var log=require('../log.js');
 var Layout=require('./ExampleLayout');
 var SimpleLayoutPage=require('../SimpleLayoutPage');
 
-var SINGLETON=new SimpleLayoutPage("page3","/page2.html",Layout);
+var SINGLETON=new SimpleLayoutPage("page3","/page3.html",Layout);
 
 SINGLETON.template=
     "    <div class='jumbotron'>"+

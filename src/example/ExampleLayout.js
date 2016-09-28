@@ -6,9 +6,9 @@
 
 var log=require('../log.js');
 
-var AbstractLayout=require('../AbstractLayout');
+var SimpleLayout=require('../SimpleLayout');
 
-var SINGLETON=new AbstractLayout("example-layout");
+var SINGLETON=new SimpleLayout("example-layout","body");
 
 SINGLETON.layout=
     "<html>"+
@@ -16,6 +16,7 @@ SINGLETON.layout=
     "  <body class="+SINGLETON.id+">"+
     "  </body>"+
     "</html>";
+
 
 
 module.exports=SINGLETON;
