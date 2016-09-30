@@ -25,7 +25,7 @@ SINGLETON.render=function(URL,e,errorUrl){
             "      <div class='container'>"+
             "        <h1>Page 2</h1>"+
             "        <p>This is the index.html mounted on ["+SINGLETON.uri+"].</p>"+
-            "        <p><a class='btn btn-primary btn-lg' href='/page3.html' role='button'>Index »</a></p>"+
+            "        <p><a class='btn btn-primary btn-lg' href='/example1.html' role='button'>Index »</a></p>"+
             "      </div>"+
             "    </div>"
     );

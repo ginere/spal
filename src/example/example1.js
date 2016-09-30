@@ -8,8 +8,8 @@ var log=require('../log.js');
 
 var SINGLETON={};
 
-SINGLETON.id="index";
-SINGLETON.uri=["","/","/index.html"];
+SINGLETON.id="example1";
+SINGLETON.uri=["/example1.html"];
 
 SINGLETON.init=function(){
     log.log("+++ Init");

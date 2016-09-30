@@ -11,7 +11,7 @@ function watchGulp() {
 	gulp.watch([global.src+"/spa.js"],    
 			   ['copy-demo-js']);
 	    
-	gulp.watch([global.src+"/example/index.html"]
+	gulp.watch([global.src+"/example/*.html"]
 			   ['copy-demo-html']);
 	
 }

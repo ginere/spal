@@ -21,7 +21,7 @@ var brfs         = require('brfs');
 //var babelify	 = require('babelify');
 var notify = require('gulp-notify');
 
-var scriptsEntryPoint='./src/example/example.js';
+var scriptsEntryPoint='./src/example/app.js';
 var dist=global.demoDist;
 var scripts='/js';
 
