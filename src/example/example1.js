@@ -23,9 +23,11 @@ SINGLETON.render=function(URL,e,errorUrl){
     $("body").html(
         "    <div class='jumbotron'>"+
             "      <div class='container'>"+
-            "        <h1>Index.html</h1>"+
+            "        <h1>Example1.html</h1>"+
             "        <p>This is the index.html mounted on ["+SINGLETON.uri.join(',')+"].</p>"+
             "        <p><a class='btn btn-primary btn-lg' href='page2.html' role='button'>Page 2 »</a></p>"+
+            "      </div>"+
+            "      <div id='widgets' class='container'>"+
             "      </div>"+
             "    </div>"
     );

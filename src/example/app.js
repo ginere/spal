@@ -16,6 +16,10 @@ spa.subscrivePage("page2",require('./page2'));
 spa.subscrivePage("example2",require('./example2'));
 spa.subscrivePage("page3",require('./page3'));
 
+spa.subscriveWidget("widget1",require('./widget1'));
+
+
+
 spa.start(errorPage);
 
 

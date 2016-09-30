@@ -14,6 +14,8 @@ SINGLETON.layout=
     "<html>"+
     "<title>Demo spal</title>"+
     "  <body class="+SINGLETON.id+">"+
+    "      <div id='widgets' class='container'>"+
+    "      </div>"+
     "  </body>"+
     "</html>";
 
