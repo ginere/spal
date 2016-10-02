@@ -1,9 +1,8 @@
 /**
  * Mother class for the layouts. 
  *
- * that.isLayoutRendered: This layout is already rendered if the body has a class named with the layoutId. That Could be overwriteen.
- *
- * that.loadLayout: IF no that.layout is defined it tryes to load  $(#layoutId).html();
+ * that.isLayoutRendered: This layout is already rendered if the body has a class named with the layoutId.
+ * that.loadLayout: The layout html is the $(#layoutId).html();
  *
  * This layout have the caracteristyc that, when the layout had already been 
  * rendered the page will be rentered into a element id passing the content.
@@ -11,12 +10,14 @@
  * The layout may have widgets, that have the following properties:
  *		- init: At initialization time. The doom is not guarantied.
  *		- layoutRendered: Called when the template is rendered, and before the first page is rendered.
- *		- pageReady: Called after the page is rentered. This is called iof the page uses one of the render fuinction of this class or if the pageRedy method is called.
+ *		- @ToBedeprecated
+ *		- pageReady: Called after the page is rentered. This is not Guarantied. It depends if the page uses the render methons on this class. It can also call the this.postRenderPage
+ *				To call the widgets.pageReady function.
 
  */
 'use strict';
 
-var Error=require('./error');
+var error=require('./error');
 var log=require('./log');
 var $ = require('jquery');
 var $Q = require('q');
@@ -24,7 +25,7 @@ var $Q = require('q');
 var SPA=require('./spa');
 
 var SINGLETON=function(layoutId){
-    debugger;
+    
 	var that = {			
 		layoutId:layoutId,
 		layout:null,
@@ -93,33 +94,22 @@ var SINGLETON=function(layoutId){
 		return (body.length>0 && body.hasClass(that.layoutId));		
 	};
 
-	that.loadLayout=function(pageId){		
+	that.loadLayout=function(page){		
 		// Waiting the init promises to start ...
 		return $Q.all(that.INIT_PROMISES).then(function(schemas) {
 			if (!that.layout) {
-                return that.loadLayoutInner().then(function(code){
-                    that.layout=code;
-                    return $Q.resolve(code);
-                });
+				// get the html from the #layoutId element
+				that.layout=$("#"+that.layoutId).html();
+				if (!that.layout){
+					//$Q.reject(new Error("Layout is empty:"+that.layoutId));
+					return error.reject("Layout is empty:"+that.layoutId);
+				} 
 			}
 		}).catch(function(err){
-			return Error.reject("Error loading layout["+layoutId+"], in page:"+pageId,err);
+			return error.reject("Error on init promises layout["+layoutId+"]  ...",err);
 		});
+
 	};
-
-
-    /**
-     * That should return a promise that returns the layout code to be rendered in the page
-     */
-    that.loadLayoutInner=function(){
-        var element=$("#"+that.layoutId);
-
-        if (element.length>0){
-            return $Q.resolve(element.html());
-        } else {
-            return Error.reject("No element:"+that.layoutId+" found to load ther layout template");
-        }
-    };
 
 	that.renderLayout=function(){
 		if (that.isLayoutRendered()){
@@ -167,66 +157,66 @@ var SINGLETON=function(layoutId){
 				// here for sure we have to call the renders the html has been changed
 				return callLayoutRenderd();
 			} else {
-				return Error.reject("Can not render layout, is empty:"+that.layoutId);
+				return error.reject("Can not render layout, is empty:"+that.layoutId);
 			}
 		}		
 	};
 
-
-    that.pageReady=function(pageId){
-        // after that call the template ready for the widgets
+	/**
+	 * Ater the page is rendered this call the 
+	 */    
+	that.postRenderPage=function(pageId){		
 		return $Q.all(
-			callingFunctions(that.PAGE_READY,"Calling the page ready function for widget:")
+			callingFunctions(that.PAGE_READY,"Calling the page ready function for the page:"+pageId+", layoutId:"+layoutId)
 		).catch(function(err){
-            return Error.reject("Calling the page ready for pageId:"+pageId+", layoutId:"+layoutId,err);            
-        });
-    };
-
-
-    /**
-     * This render the content into th element passed.
-     * Then the readypage is called for the widgets
-     */
-	// This is the render method that should be called from all the pages.
-    // If the template is already rendered, do nothing
-	that.renderIntoElement=function(pageId,element,content){
-		if (element) {
-            return that.renderFromFunction(pageId,function(){
-                var target=$(element);
-				if (target.length>0){
-					target.html(content);		
-					log.info("Rendered content into viewport:"+element+" for pageId:"+pageId+", layoutId:"+layoutId);
-                    return $Q.resolve();
-				} else {
-					return Error.reject("Viewport not found:"+element+" for pageId:"+pageId+", layoutId:"+layoutId);
-				}                
-            });
-        } else {
-			return Error.reject("Viewport not found:"+element+" for pageId:"+pageId+", layoutId:"+layoutId);            
-        }        
+			return error.reject("While calling the widget page ready functions, pageId"+pageId+", layoutId:"+layoutId,err);
+        });		
 	};
 
 
+// 	// This is the render method that should be called from all the pages.
+//     // If the template is already rendered, do nothing
+// 	that.render=function(viewport,content,pageId){		
+// 		return that.renderLayout().then(function(){
+// 			if (viewport && content) {
+// 				var target=$(viewport);
+// 				if (target.length>0){
+// 					target.html(content);		
+// 					log.info("Renderedd content into view port:"+viewport);
+// 				} else {
+// 					return error.reject("Viewport not found:"+viewport);
+// 				}
+// 			}
+
+// 			// after that call the template ready for the widgets
+// 			return this.postRenderPage(pageId);
+// 		}).catch(function(err){
+// 			return error.reject("While rendering layout id:"+that.layoutId+
+// 								",viewport:"+viewport+
+// 								",content:"+content
+// 								,err);
+// 		});		
+// 	};
+
     /**
-     * This method will call the function to render the page.
-     * The function shuld return a promisse.
-     * After the promise the readypage is called for the widgets
+     * This is another method to render a page.
+     * We just pass a function that will return a promise.
+     * When finish the widget page ready will be called.
      */
-	that.renderFromFunction=function(pageId,childRenderFunction){		
+	that.render=function(pageId,childRenderFunction){		
 		return that.renderLayout().then(function(){
             if (!$.isFunction(childRenderFunction)){
-			    return Error.reject("The child render function is not a function, pageId:"+pageId+", layoutId:"+layoutId);
+			    return error.reject("The child render function is not a function, pageId"+pageId+", layoutId:"+layoutId);
             } else {
                 return $Q(childRenderFunction()).then(function(){
-                    // after that call the template ready for the widgets
-                    return that.pageReady(pageId);
+					return this.postRenderPage(pageId);
 		        }).catch(function(err){
-			        return Error.reject("While calling the child render function, pageId:"+pageId+", layoutId:"+layoutId,err);
+			        return error.reject("While calling the child render function, pageId"+pageId+", layoutId:"+layoutId,err);
                 });
             }
             
 		}).catch(function(err){
-			return Error.reject("The rendering page function for pageId:"+pageId+", layoutId:"+layoutId,err);
+			return error.reject("The rendering page function for pageId"+pageId+", layoutId:"+layoutId,err);
 		});		
 	};
 	

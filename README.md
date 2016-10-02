@@ -7,4 +7,6 @@ This is still a DRAF!
 
 Kind Regards
 
+For the demo purposes we use also bootstrap
+
 A. M.

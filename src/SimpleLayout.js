@@ -18,7 +18,7 @@ var SINGLETON=function(layoutId,selector){
     var that=new AbstractLayout(layoutId);
     
     that.render=function(pageId,content){
-        $(selector).html(content);
+		return that.renderIntoElement(pageId,selector,content);
     }
     
 	return that;	

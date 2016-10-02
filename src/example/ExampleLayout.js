@@ -8,14 +8,16 @@ var log=require('../log.js');
 
 var SimpleLayout=require('../SimpleLayout');
 
-var SINGLETON=new SimpleLayout("example-layout","body");
+var SINGLETON=new SimpleLayout("example-layout","#content");
 
 SINGLETON.layout=
     "<html>"+
     "<title>Demo spal</title>"+
-    "  <body class="+SINGLETON.id+">"+
-    "      <div id='widgets' class='container'>"+
-    "      </div>"+
+    "  <body class="+SINGLETON.layoutId+">"+
+    "      <h1>Example Layout</h1>"+
+    "      <div id='content' class='container'></div>"+
+    "      <div class='container'><a href='./index.html'>Index »</a></div>"+
+    "      <div id='widgets' class='container'></div>"+
     "  </body>"+
     "</html>";
 

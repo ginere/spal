@@ -196,7 +196,6 @@ function openPage(page,uri,isFirstOpen){
 				}).then(function(){
 					return callRenderWidgets(page);							
 				}).catch(function(err){
-                    debugger;
 					return showError(err,uri);
 				});					
 			}

@@ -15,7 +15,7 @@ SINGLETON.template=
     "    <div class='jumbotron'>"+
     "      <div class='container'>"+
     "        <h1>Example 2</h1>"+
-    "        <p>This is the index.html mounted on ["+SINGLETON.uri+"].</p>"+
+    "        <p>This is the example2.html mounted on ["+SINGLETON.uri+"].</p>"+
     "        <p><a class='btn btn-primary btn-lg' href='./page3.html' role='button'>Index »</a></p>"+
     "      </div>"+
     "    </div>";

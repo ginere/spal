@@ -13,11 +13,6 @@ var rename=require('gulp-rename');
 var gulp   = require('gulp');
 var del    = require('del');
 
-// global.sources_hint=["*.js",
-// 					 "gulp/**/*.js",
-// 					 "src/**/*.js",
-// 					];
-
 global.dist_js_sources=["src/*.js"
 					   ];
 global.src="src";
@@ -25,6 +20,7 @@ global.dist="dist";
 global.demoDist="./demo";
 global.bower="./bower_components";
 
+global.vendors_dist=global.demoDist+"/lib";
 
 gulp.task('jshint-dev', function () {
     return gulp.src(["*.js",
@@ -85,6 +81,8 @@ gulp.task('copy-demo-js',function () {
     ;
 });
 
+gulp.task('vendors', require('./vendors-task'));
+
 gulp.task('copy-demo-bower',function () {
     return gulp.src([global.bower+'/**'])
         .pipe(gulp.dest(global.demoDist+'/lib'))
@@ -131,7 +129,8 @@ gulp.task('demo',['dist'],function(cb) {
     runSequence([
         'copy-demo-html',
         'copy-demo-js',
-        'copy-demo-bower',
+//        'copy-demo-bower',
+		'vendors',
         'browserify'
     ],cb);
     
