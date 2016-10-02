@@ -24,7 +24,7 @@ var $Q = require('q');
 var SPA=require('./spa');
 
 var SINGLETON=function(layoutId){
-    debugger;
+
 	var that = {			
 		layoutId:layoutId,
 		layout:null,

@@ -16,7 +16,7 @@ SINGLETON.template=
     "      <div class='container'>"+
     "        <h1>Page 3</h1>"+
     "        <p>This is the index.html mounted on ["+SINGLETON.uri+"].</p>"+
-    "        <p><a class='btn btn-primary btn-lg' href='/index.html' role='button'>Index »</a></p>"+
+    "        <p><a class='btn btn-primary btn-lg' href='/example2.html' role='button'>Index »</a></p>"+
     "      </div>"+
     "    </div>";
 

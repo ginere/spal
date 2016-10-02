@@ -141,8 +141,7 @@ gulp.task('w',['demo','browsersync'],function(cb) {
     cb = cb || function() {};
     
     runSequence([
-        'browserify-watch',
-        'watch'
-    ],cb);
+        'browserify-watch'
+    ],'watch',cb);
     
 });
