@@ -26,6 +26,6 @@ SINGLETON.layout=
     "  </body>"+
     "</html>";
 
-
+SINGLETON.subscriveWidget("layout-widget",require('./LayoutWidget'));
 
 module.exports=SINGLETON;

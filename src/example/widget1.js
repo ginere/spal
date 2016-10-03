@@ -17,12 +17,12 @@ SINGLETON.init=function(){
 
 
 SINGLETON.documentReady=function(){
-    $("#widgets").append("<p>documentReady</p>");
+    $("#widgets").append("<p>documentReady: widget:"+SINGLETON.id+"</p>");
 };
 
 
 SINGLETON.pageReady=function(page){
-    $("#widgets").append("<p>pageReady:"+page.id+"</p>");
+    $("#widgets").append("<p>pageReady: widget:"+SINGLETON.id+", page:"+page.id+"</p>");
 };
 
 

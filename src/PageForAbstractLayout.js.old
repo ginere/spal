@@ -1,12 +1,9 @@
 /**
- * This is a nother class for a simple page that do not load json content.
- *
- * if no template this look for a tamplate called $("#"+obj.id).html();
- * This implement a default render that render the demplate of the layout.
+ * This is the mother class for pages that uses layouts
  */
 'use strict';
 
-var Error=require('./error');
+var error=require('./error');
 var log=require('./log');
 var $ = require('jquery');
 var $Q = require('q');
@@ -32,7 +29,7 @@ var SINGLETON=function(id,uri,Layout){
 
 		var template=$("#"+obj.id).html();
 		if (!template){
-			throw Error.error("Template is empty, the dom id:"+obj.id+" can not be found.");
+			throw error.error("Template is empty, the dom id:"+obj.id+" can not be found.");
 		} else {
 			return template;
 		}
@@ -45,22 +42,13 @@ var SINGLETON=function(id,uri,Layout){
 			if (!that.template) {
 				that.template=that.loadPageTemplate();
 			}
-			return Error.resolve();		
+			return error.resolve();		
 		}).catch(function(err){
-			return Error.reject("While loading the layouts for uri:"+uri,err);
+			return error.reject("While loading the layouts for uri:"+uri,err);
 		});
 		
 	};
 
-    that.render=function(uri){
-        try {
-            return Layout.render(that,that.template);
-        }catch(err){
-            throw Error.error("Error while rentering page:"+id+", uri:"+uri,err);
-        }
-    };
-
-    
 	that.close=function(uri){
 		log.info("Close:"+that.id+" Uri:"+uri);		
 	};
@@ -70,5 +58,3 @@ var SINGLETON=function(id,uri,Layout){
 
 
 module.exports=SINGLETON;
-
-

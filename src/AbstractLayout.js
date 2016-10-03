@@ -9,10 +9,19 @@
  * rendered the page will be rentered into a element id passing the content.
  *
  * The layout may have widgets, that have the following properties:
- *		- init: At initialization time. The doom is not guarantied.
- *		- layoutRendered: Called when the template is rendered, and before the first page is rendered.
- *		- pageReady: Called after the page is rentered. This is called iof the page uses one of the render fuinction of this class or if the pageRedy method is called.
-
+ *
+ *		- init: At initialization time. The doom is not guarantied. 
+ *          - The AbstractLayout is passed in param.
+ *
+ *		- layoutRendered: Called when the template is rendered, and before the 
+ *        first page is rendered.
+ *          - The AbstractLayout is passed in param.
+ *
+ *		- pageReady: Called after the page is rentered. This is called iof the 
+ *        page uses one of the render fuinction of this class or if the pageRedy
+ *        method is called.
+ *          - The AbstractLayout is passed in param.
+ *          - The page object is passed in parameter
  */
 'use strict';
 
@@ -66,13 +75,13 @@ var SINGLETON=function(layoutId){
 		}		
 	};
 
-	function callingFunctions(FUNCTIONS_ARRAY,title){
+	function callingFunctions(FUNCTIONS_ARRAY,title,param){
 		var PROMISES=[];
 
 		$.each(FUNCTIONS_ARRAY,function(index,value){
 			log.info(title+value.name);
 			
-			PROMISES.push(value.f());
+			PROMISES.push(value.f(that,param));
 		});
 
 		return PROMISES;
@@ -93,7 +102,7 @@ var SINGLETON=function(layoutId){
 		return (body.length>0 && body.hasClass(that.layoutId));		
 	};
 
-	that.loadLayout=function(pageId){		
+	that.loadLayout=function(page){		
 		// Waiting the init promises to start ...
 		return $Q.all(that.INIT_PROMISES).then(function(schemas) {
 			if (!that.layout) {
@@ -103,7 +112,7 @@ var SINGLETON=function(layoutId){
                 });
 			}
 		}).catch(function(err){
-			return Error.reject("Error loading layout["+layoutId+"], in page:"+pageId,err);
+			return Error.reject("Error loading layout["+layoutId+"], in page:"+page.id,err);
 		});
 	};
 
@@ -173,12 +182,12 @@ var SINGLETON=function(layoutId){
 	};
 
 
-    that.pageReady=function(pageId){
+    that.pageReady=function(page){
         // after that call the template ready for the widgets
 		return $Q.all(
-			callingFunctions(that.PAGE_READY,"Calling the page ready function for widget:")
+			callingFunctions(that.PAGE_READY,"Calling the page ready function for widget:",page)
 		).catch(function(err){
-            return Error.reject("Calling the page ready for pageId:"+pageId+", layoutId:"+layoutId,err);            
+            return Error.reject("Calling the page ready for pageId:"+page.id+", layoutId:"+layoutId,err);            
         });
     };
 
@@ -189,20 +198,22 @@ var SINGLETON=function(layoutId){
      */
 	// This is the render method that should be called from all the pages.
     // If the template is already rendered, do nothing
-	that.renderIntoElement=function(pageId,element,content){
-		if (element) {
-            return that.renderFromFunction(pageId,function(){
+	that.renderIntoElement=function(page,element,content){
+        if (!page || !page.id){
+			return Error.reject("No page object passed in parameter. LayoutId:"+layoutId,err);
+        } else if (element) {
+            return that.renderFromFunction(page,function(){
                 var target=$(element);
 				if (target.length>0){
 					target.html(content);		
-					log.info("Rendered content into viewport:"+element+" for pageId:"+pageId+", layoutId:"+layoutId);
+					log.info("Rendered content into viewport:"+element+" for pageId:"+page.id+", layoutId:"+layoutId);
                     return $Q.resolve();
 				} else {
-					return Error.reject("Viewport not found:"+element+" for pageId:"+pageId+", layoutId:"+layoutId);
+					return Error.reject("Viewport not found:"+element+" for pageId:"+page.id+", layoutId:"+layoutId);
 				}                
             });
         } else {
-			return Error.reject("Viewport not found:"+element+" for pageId:"+pageId+", layoutId:"+layoutId);            
+			return Error.reject("Viewport not found:"+element+" for pageId:"+page.id+", layoutId:"+layoutId);            
         }        
 	};
 
@@ -212,22 +223,27 @@ var SINGLETON=function(layoutId){
      * The function shuld return a promisse.
      * After the promise the readypage is called for the widgets
      */
-	that.renderFromFunction=function(pageId,childRenderFunction){		
-		return that.renderLayout().then(function(){
-            if (!$.isFunction(childRenderFunction)){
-			    return Error.reject("The child render function is not a function, pageId:"+pageId+", layoutId:"+layoutId);
-            } else {
-                return $Q(childRenderFunction()).then(function(){
-                    // after that call the template ready for the widgets
-                    return that.pageReady(pageId);
-		        }).catch(function(err){
-			        return Error.reject("While calling the child render function, pageId:"+pageId+", layoutId:"+layoutId,err);
-                });
-            }
-            
-		}).catch(function(err){
-			return Error.reject("The rendering page function for pageId:"+pageId+", layoutId:"+layoutId,err);
-		});		
+	that.renderFromFunction=function(page,childRenderFunction){
+        if (!page || !page.id){
+            debugger;
+			return Error.reject("No page object passed in parameter. LayoutId:"+layoutId);
+        } else {        
+		    return that.renderLayout().then(function(){
+                if (!$.isFunction(childRenderFunction)){
+			        return Error.reject("The child render function is not a function, pageId:"+page.id+", layoutId:"+layoutId);
+                } else {
+                    return $Q(childRenderFunction()).then(function(){
+                        // after that call the template ready for the widgets
+                        return that.pageReady(page);
+		            }).catch(function(err){
+			            return Error.reject("While calling the child render function, pageId:"+page.id+", layoutId:"+layoutId,err);
+                    });
+                }
+                
+		    }).catch(function(err){
+			    return Error.reject("The rendering page function for pageId:"+page.id+", layoutId:"+layoutId,err);
+		    });
+        }
 	};
 	
 

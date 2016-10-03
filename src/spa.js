@@ -21,6 +21,7 @@
  *		- init: A function to be called when the widget is subscrived(No doom).
  *		- documentReady: Called when the SPA application jqury document ready event.
  *		- pageReady: Called after the page has been rendered. For each
+ *          - The page object is passed in parameter.
  */
 'use strict';
 
