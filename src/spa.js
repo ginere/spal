@@ -47,6 +47,10 @@ var SINGLETON={};
 
 // If your pages are like http://server/example/page1.html http://server/example/page2.html you can
 // set the application root to "/example" and you can define your pages as page1.html and page2.html
+
+// Definition: The pages defines uris to access to.
+// The URL may be composed by one prefix: SINGLETON.ROOT that should be added and 
+// removed when need. Internaly we should handle uris widthout prefix
 SINGLETON.ROOT="";
 
 SINGLETON.setApplicationRoot=function(applicationRoot){
@@ -72,6 +76,9 @@ function getPageUri(URL){
 }
 
 
+// Definition: The pages defines uris to access to.
+// The URL may be composed by one prefix: SINGLETON.ROOT that should be added and 
+// removed when need. Internaly we should handle uris widthout prefix
 function getPageURL(uri){
 	if (uri){
 		if (!uri.startsWith("/")){
@@ -172,34 +179,58 @@ function openPage(page,uri,isFirstOpen){
 				return showError(err,uri);
 			});
 		} else {
-			if (currentPage && page.id === currentPage.id) {
-				log.debug("Already in the page, avoiding:"+page.id);
-				
-				// To suppor hash urls /login.html#signup /login.html#signin
-				pushUri(uri);
 
-				return $Q.resolve();
-			} else {
-				// load the information for the page to be displayed
-				return $Q((page.load)?page.load(uri):null).then(function(){
-					// close the old one
-					return closePage();
-				}).then(function(){
-					// push the url into the address bar to the page to have access to the url
-					pushUri(uri);
-					
-					currentPage=page;
-					
-					// go to the page top
-					window.scrollTo(0,0);
-					
-					return page.render(uri);
-				}).then(function(){
-					return callRenderWidgets(page);							
-				}).catch(function(err){
-					return showError(err,uri);
-				});					
-			}
+			// To avoid the same page we should test the URL
+			// BUT NOT DO THAT, may be user what to reload the same page ...
+
+			// load the information for the page to be displayed
+			return $Q((page.load)?page.load(uri):null).then(function(){
+				// close the old one
+				return closePage();
+			}).then(function(){
+				// push the url into the address bar to the page to have access to the url
+				pushUri(uri);
+				
+				currentPage=page;
+				
+				// go to the page top
+				window.scrollTo(0,0);
+				
+				return page.render(uri);
+			}).then(function(){
+				return callRenderWidgets(page);							
+			}).catch(function(err){
+				return showError(err,uri);
+			});					
+
+// 			if (currentPage && page.id === currentPage.id) {
+// 				log.debug("Already in the page, avoiding:"+page.id);
+//				
+// 				// To suppor hash urls /login.html#signup /login.html#signin
+// 				pushUri(uri);
+//
+// 				return $Q.resolve();
+// 			} else {
+// 				// load the information for the page to be displayed
+// 				return $Q((page.load)?page.load(uri):null).then(function(){
+// 					// close the old one
+// 					return closePage();
+// 				}).then(function(){
+// 					// push the url into the address bar to the page to have access to the url
+// 					pushUri(uri);
+//					
+// 					currentPage=page;
+//					
+// 					// go to the page top
+// 					window.scrollTo(0,0);
+//					
+// 					return page.render(uri);
+// 				}).then(function(){
+// 					return callRenderWidgets(page);							
+// 				}).catch(function(err){
+// 					return showError(err,uri);
+// 				});					
+// 			}
 		}
 	}
 }
@@ -210,17 +241,24 @@ function openPage(page,uri,isFirstOpen){
  * Returns true if the uri has been handled by the controler.
  */
 function openUrl(URL,isFirstOpen) {
-
 	if (PAGES[URL]){
 		openPage(PAGES[URL],getPageUri(URL),isFirstOpen);
 		return true;
 	} else {
 		var page=null;
 		log.debug("URL:"+URL);
-		var array = URL.split('/'); // /about.html -> ["", "about.html"]
+		var array;
+		if (SINGLETON.ROOT){
+			// the url can be: SINGLETON.ROOT/about.html
+			URL.substring(SINGLETON.ROOT.length,URL.length).split('/'); // /about.html -> ["", "about.html"]
+		} else {
+			array = URL.split('/'); // /about.html -> ["", "about.html"]
+		}
 		
 		if (array.length > 0 && PAGES[array[1]] ) {
 			page=PAGES[array[1]];
+		} else if (array.length > 1 && PAGES[array[2]] ) {
+			page=PAGES[array[2]];
 		} else if (PAGES[array[0]]) {
 			page=PAGES[array[0]];
 		} else {
@@ -328,12 +366,15 @@ SINGLETON.subscrivePage=function(name,page){
 		} else {			
 			if ($.isArray(page.uri)) {
 				$.each(page.uri,function(index,value){
-					log.info("Subscriving page:"+page.id+", url:'"+value+"'");
-					PAGES[getPageURL(value)]=page;		
+					//var urlToSubscrive=getPageURL(value);
+					var urlToSubscrive=value;
+					log.info("Subscriving page:"+page.id+", url:'"+value+"' -> "+urlToSubscrive);
+					PAGES[urlToSubscrive]=page;		
 				});
 			} else {
 				log.info("Subscriving page:"+page.id+", url:'"+page.uri+"'");
-				PAGES[getPageURL(page.uri)]=page;		
+				PAGES[page.uri]=page;		
+				//PAGES[getPageURL(page.uri)]=page;		
 			}
 		}
 

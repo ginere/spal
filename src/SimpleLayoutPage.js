@@ -1,8 +1,8 @@
 /**
  * This is a nother class for a simple page that do not load json content.
  *
- * if no template this look for a tamplate called $("#"+obj.id).html();
- * This implement a default render that render the demplate of the layout.
+ * LOAD FUNCTION: if no template attribute defined, this look for a tamplate called $("#"+obj.id).html() this content will be used as the page template.
+ * This implement a default render that render the template into the layout.
  */
 'use strict';
 

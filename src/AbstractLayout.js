@@ -17,7 +17,7 @@
  *        first page is rendered.
  *          - The AbstractLayout is passed in param.
  *
- *		- pageReady: Called after the page is rentered. This is called iof the 
+ *		- pageReady: Called after the page is rentered. This is called if the 
  *        page uses one of the render fuinction of this class or if the pageRedy
  *        method is called.
  *          - The AbstractLayout is passed in param.
@@ -152,11 +152,13 @@ var SINGLETON=function(layoutId){
 // 				$(document).bind("DOMSubtreeModified", function(event){
 // 					console.log(event.target);
 // 				});
-
+				
+				// TODO css need time to load ...
 				var newDoc = document.open("text/html");
 				newDoc.write(that.layout);
 				newDoc.close();
-				
+
+
 // 				$(newDoc).bind("DOMSubtreeModified", function(event){
 // 					console.log(event.target);
 // 				});
@@ -169,12 +171,23 @@ var SINGLETON=function(layoutId){
 				// Y no tenemos el problema de los includes de los includes que al cambiar de layout, la definicion de los layout-list desaparecia y no podiamos mas cambiar de layout ... VERIFICARLO
 
 				// LA cambiar de layout alomejor hay que resuscrivir los eventos del SPA porque desaparecen los listerners. VERIFICARLO
-				
-				// Resubscriving events ...
-				SPA.subscriveEvents();
-				
-				// here for sure we have to call the renders the html has been changed
-				return callLayoutRenderd();
+
+
+				// wait the DOM & css to be loaded ...
+				var deferred = $Q.defer();
+				$( document ).ready(function() {
+					// Resubscriving events ...
+					SPA.subscriveEvents();
+					
+					// here for sure we have to call the renders the html has been changed
+					return $Q(callLayoutRenderd()).then(function(){
+						return deferred.resolve(null);
+					}).catch(function(err){
+						return Error.reject("Calling the LayoutRenderd ...",err);
+					});
+
+				});
+				return deferred.promise;
 			} else {
 				return Error.reject("Can not render layout, is empty:"+that.layoutId);
 			}
@@ -200,18 +213,20 @@ var SINGLETON=function(layoutId){
     // If the template is already rendered, do nothing
 	that.renderIntoElement=function(page,element,content){
         if (!page || !page.id){
-			return Error.reject("No page object passed in parameter. LayoutId:"+layoutId,err);
+			return Error.reject("No page object passed in parameter. LayoutId:"+layoutId);
         } else if (element) {
             return that.renderFromFunction(page,function(){
                 var target=$(element);
 				if (target.length>0){
 					target.html(content);		
-					log.info("Rendered content into viewport:"+element+" for pageId:"+page.id+", layoutId:"+layoutId);
-                    return $Q.resolve();
+					log.info("AbstractLayout: Rendered content into viewport:"+element+" for pageId:"+page.id+", layoutId:"+layoutId);
+					// TODO Extra delay needed ...
+                    return $Q.resolve().delay(1);
 				} else {
 					return Error.reject("Viewport not found:"+element+" for pageId:"+page.id+", layoutId:"+layoutId);
 				}                
             });
+
         } else {
 			return Error.reject("Viewport not found:"+element+" for pageId:"+page.id+", layoutId:"+layoutId);            
         }        
@@ -225,7 +240,6 @@ var SINGLETON=function(layoutId){
      */
 	that.renderFromFunction=function(page,childRenderFunction){
         if (!page || !page.id){
-            debugger;
 			return Error.reject("No page object passed in parameter. LayoutId:"+layoutId);
         } else {        
 		    return that.renderLayout().then(function(){

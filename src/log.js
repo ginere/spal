@@ -1,6 +1,5 @@
 /**
- * This code is used to exend the functionalities of the child pages.
- * And to have some inner shared behaviour like the key events.
+ * Log base utilitie
  */
 
 var error = require('./error');
