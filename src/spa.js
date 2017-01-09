@@ -41,6 +41,13 @@ var name="SPA";
 
 var SINGLETON={};
 
+function startsWith(str,prefix){
+	if (!str){
+		return ;
+	} else {
+		return str.indexOf(prefix) === 0;
+	}
+}
 
 // This sets the application root. All the uris and urls will be relative to that.
 // That allows to install your pages relatives to a parent folder.
@@ -56,7 +63,7 @@ SINGLETON.ROOT="";
 SINGLETON.setApplicationRoot=function(applicationRoot){
 	
 	if (applicationRoot){
-		if (!applicationRoot.startsWith("/")){
+		if (!startsWith(applicationRoot,"/")){
 			SINGLETON.ROOT="/"+applicationRoot;
 		} else {
 			SINGLETON.ROOT=applicationRoot;
@@ -65,7 +72,6 @@ SINGLETON.setApplicationRoot=function(applicationRoot){
 	}
 	
 };
-
 
 function getPageUri(URL){
 	if (SINGLETON.ROOT){
@@ -81,7 +87,7 @@ function getPageUri(URL){
 // removed when need. Internaly we should handle uris widthout prefix
 function getPageURL(uri){
 	if (uri){
-		if (!uri.startsWith("/")){
+		if (!startsWith(uri,"/")){
 			return SINGLETON.ROOT+"/"+uri;
 		} else {
 			return SINGLETON.ROOT+uri;

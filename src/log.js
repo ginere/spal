@@ -7,6 +7,9 @@ var error = require('./error');
 var SINGLETON={};
 
 function inner(obj,f,msg,err){
+	if (!f){
+		return ;
+	}
     f.bind(obj)(msg);
     if (err) {
         // f.bind(obj)(err);
