@@ -1,18 +1,17 @@
 {
-  "name": "skin-admin",
+  "name": "spal",
   "version": "1.0.0",
-  "description": "Skin for video administrations",
+  "description": "Single Page Application - Comon utilities",
   "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "ssh://git@git.spoonapps.com/home/git/git/skin-admin.git"
+    "url": "https://github.com/ginere/spal.git"
   },
   "keywords": [
-    "skin",
-    "admin"
+    "spal"
   ],
   "browserify": {
     "transform": [
